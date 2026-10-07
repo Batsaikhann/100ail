@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { FilterGroup } from "@/data/catalog";
 import { formatNumber } from "@/lib/format";
+import { ChevronDownIcon } from "./icons";
 import { Checkbox, Collapsible, Panel, PanelHeader } from "./ui";
 
 export interface PriceRange {
@@ -37,6 +38,10 @@ export function FilterPanel({
   // кран хүртэл). Шугаман гулсуур дээр ийм хүрээг чирэх боломжгүй —
   // 1% нь арван сая₮ үсэрнэ. Тиймээс байрлалыг логарифмаар буулгана:
   // гулсуурын алхам бүр үнийг үржүүлнэ, хуваахгүй.
+  // Утсан дээр шүүлтүүр барааны дээр байрлах тул анхандаа хураалттай
+  // байна — эс бөгөөс бараа харахын тулд урт жагсаалт гүйлгэх болно.
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const LOG_STEPS = 1000;
   const lo = Math.max(1, range.min);
   const hi = Math.max(lo + 1, range.max);
@@ -71,121 +76,145 @@ export function FilterPanel({
       <PanelHeader
         title="Шүүлтүүр"
         action={
-          <button
-            type="button"
-            onClick={onClearAll}
-            className="shrink-0 text-xs text-mute underline-offset-2 transition-colors hover:text-brand hover:underline"
-          >
-            Бүгдийг арилгах
-          </button>
+          <span className="flex shrink-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={onClearAll}
+              className="shrink-0 text-xs text-mute underline-offset-2 transition-colors hover:text-brand hover:underline"
+            >
+              Бүгдийг арилгах
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-expanded={mobileOpen}
+              aria-controls="filter-body"
+              aria-label={mobileOpen ? "Шүүлтүүр хураах" : "Шүүлтүүр дэлгэх"}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-ink-600 text-mute transition-colors hover:text-fg xl:hidden"
+            >
+              <ChevronDownIcon
+                className={`h-4 w-4 transition-transform ${
+                  mobileOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          </span>
         }
       />
 
-      <Collapsible
-        title="Үнийн хүрээ"
-        open={openGroups.price ?? true}
-        onToggle={() => onToggleGroup("price")}
-      >
-        <div className="flex items-center gap-2">
-          <PriceInput
-            label="Доод үнэ"
-            value={price.min}
-            onCommit={(v) =>
-              onPriceChange({ ...price, min: clampMin(Math.max(v, range.min)) })
-            }
-          />
-          <span aria-hidden className="text-mute-dim">
-            —
-          </span>
-          <PriceInput
-            label="Дээд үнэ"
-            value={price.max}
-            onCommit={(v) =>
-              onPriceChange({ ...price, max: clampMax(Math.min(v, range.max)) })
-            }
-          />
-        </div>
-
-        <div className="relative mt-5 h-4">
-          <span
-            aria-hidden
-            className="absolute inset-x-0 top-1.5 h-1 rounded-full bg-ink-700"
-          />
-          <span
-            aria-hidden
-            className="absolute top-1.5 h-1 rounded-full bg-brand"
-            style={{ left: `${leftPct}%`, right: `${100 - rightPct}%` }}
-          />
-          <input
-            type="range"
-            aria-label="Доод үнэ"
-            min={0}
-            max={LOG_STEPS}
-            step={1}
-            value={toPos(price.min)}
-            onChange={(e) =>
-              onPriceChange({
-                ...price,
-                min: clampMin(toValue(Number(e.target.value))),
-              })
-            }
-            className="absolute inset-x-0 top-0 h-4 w-full"
-          />
-          <input
-            type="range"
-            aria-label="Дээд үнэ"
-            min={0}
-            max={LOG_STEPS}
-            step={1}
-            value={toPos(price.max)}
-            onChange={(e) =>
-              onPriceChange({
-                ...price,
-                max: clampMax(toValue(Number(e.target.value))),
-              })
-            }
-            className="absolute inset-x-0 top-0 h-4 w-full"
-          />
-        </div>
-      </Collapsible>
-
-      {groups.map((group) => {
-        const chosen = selected[group.id] ?? new Set<string>();
-        return (
-          <Collapsible
-            key={group.id}
-            title={group.title}
-            open={openGroups[group.id] ?? true}
-            onToggle={() => onToggleGroup(group.id)}
-          >
-            <div
-              className={
-                group.twoColumn ? "grid grid-cols-2 gap-x-2" : "flex flex-col"
+      <div id="filter-body" className={mobileOpen ? "" : "hidden xl:block"}>
+        <Collapsible
+          title="Үнийн хүрээ"
+          open={openGroups.price ?? true}
+          onToggle={() => onToggleGroup("price")}
+        >
+          <div className="flex items-center gap-2">
+            <PriceInput
+              label="Доод үнэ"
+              value={price.min}
+              onCommit={(v) =>
+                onPriceChange({
+                  ...price,
+                  min: clampMin(Math.max(v, range.min)),
+                })
               }
+            />
+            <span aria-hidden className="text-mute-dim">
+              —
+            </span>
+            <PriceInput
+              label="Дээд үнэ"
+              value={price.max}
+              onCommit={(v) =>
+                onPriceChange({
+                  ...price,
+                  max: clampMax(Math.min(v, range.max)),
+                })
+              }
+            />
+          </div>
+
+          <div className="relative mt-5 h-4">
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-1.5 h-1 rounded-full bg-ink-700"
+            />
+            <span
+              aria-hidden
+              className="absolute top-1.5 h-1 rounded-full bg-brand"
+              style={{ left: `${leftPct}%`, right: `${100 - rightPct}%` }}
+            />
+            <input
+              type="range"
+              aria-label="Доод үнэ"
+              min={0}
+              max={LOG_STEPS}
+              step={1}
+              value={toPos(price.min)}
+              onChange={(e) =>
+                onPriceChange({
+                  ...price,
+                  min: clampMin(toValue(Number(e.target.value))),
+                })
+              }
+              className="absolute inset-x-0 top-0 h-4 w-full"
+            />
+            <input
+              type="range"
+              aria-label="Дээд үнэ"
+              min={0}
+              max={LOG_STEPS}
+              step={1}
+              value={toPos(price.max)}
+              onChange={(e) =>
+                onPriceChange({
+                  ...price,
+                  max: clampMax(toValue(Number(e.target.value))),
+                })
+              }
+              className="absolute inset-x-0 top-0 h-4 w-full"
+            />
+          </div>
+        </Collapsible>
+
+        {groups.map((group) => {
+          const chosen = selected[group.id] ?? new Set<string>();
+          return (
+            <Collapsible
+              key={group.id}
+              title={group.title}
+              open={openGroups[group.id] ?? true}
+              onToggle={() => onToggleGroup(group.id)}
             >
-              {group.options.map((option) => (
-                <Checkbox
-                  key={option.id}
-                  id={`${group.id}-${option.id}`}
-                  label={option.label}
-                  count={option.count}
-                  checked={chosen.has(option.id)}
-                  compact={group.twoColumn}
-                  onChange={() => onToggle(group.id, option.id)}
-                />
-              ))}
-            </div>
-            {group.expandable ? (
-              <button
-                type="button"
-                className="mt-2 text-xs text-brand transition-opacity hover:opacity-80"
+              <div
+                className={
+                  group.twoColumn ? "grid grid-cols-2 gap-x-2" : "flex flex-col"
+                }
               >
-                + Илүү харах
-              </button>
-            ) : null}
-          </Collapsible>
-        );
-      })}
+                {group.options.map((option) => (
+                  <Checkbox
+                    key={option.id}
+                    id={`${group.id}-${option.id}`}
+                    label={option.label}
+                    count={option.count}
+                    checked={chosen.has(option.id)}
+                    compact={group.twoColumn}
+                    onChange={() => onToggle(group.id, option.id)}
+                  />
+                ))}
+              </div>
+              {group.expandable ? (
+                <button
+                  type="button"
+                  className="mt-2 text-xs text-brand transition-opacity hover:opacity-80"
+                >
+                  + Илүү харах
+                </button>
+              ) : null}
+            </Collapsible>
+          );
+        })}
+      </div>
     </Panel>
   );
 }

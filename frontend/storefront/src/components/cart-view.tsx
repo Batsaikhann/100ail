@@ -88,7 +88,7 @@ export function CartView() {
             </Link>
           </Panel>
         ) : (
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
             <div className="flex flex-col gap-4">
               {groups.map((group) => (
                 <Panel key={group.supplierId}>
@@ -589,7 +589,7 @@ function VehiclePicker({ group }: { group: SupplierGroup }) {
                       </span>
                     </h4>
 
-                    <div className="grid gap-3 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,150px)] sm:items-center">
+                    <div className="grid grid-cols-1 gap-3 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,150px)] sm:items-center">
                       <CargoBox bed={shown.bed} />
                       <div className="flex flex-col gap-2.5">
                         <CargoStat

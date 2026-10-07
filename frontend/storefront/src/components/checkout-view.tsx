@@ -130,12 +130,12 @@ export function CheckoutView() {
         ) : (
           <form
             onSubmit={submit}
-            className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start"
+            className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start"
           >
             <div className="flex flex-col gap-4">
               <Panel>
                 <PanelHeader title="Хүлээн авагчийн мэдээлэл" />
-                <div className="grid gap-3.5 px-4 py-3.5 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3.5 px-4 py-3.5 sm:grid-cols-2">
                   <Field label="Нэр" name="name" required />
                   <Field
                     label="Утасны дугаар"
@@ -224,7 +224,7 @@ export function CheckoutView() {
                   </label>
 
                   {isCompany ? (
-                    <div className="grid gap-3.5 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                       <Field label="Байгууллагын нэр" name="company" required />
                       <Field
                         label="Регистрийн дугаар"

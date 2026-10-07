@@ -16,8 +16,10 @@ import {
   CATEGORY_ICONS,
   CartIcon,
   ChevronDownIcon,
+  CloseIcon,
   HeartIcon,
   LogoMark,
+  MenuIcon,
   UserIcon,
 } from "./icons";
 
@@ -44,6 +46,8 @@ export function SiteHeader({
   const categories = useResource<ApiCategory[]>("/categories");
   /** Дэд ангиллын мөр нээлттэй байгаа үндсэн ангилал */
   const [openCategory, setOpenCategory] = useState("");
+  /** Утсан дээрх үндсэн цэс (lg-ээс доош навигаци нуугддаг) */
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Нэвтэрсний дараа байсан хуудас руугаа буцаана
   const pathname = usePathname();
@@ -60,14 +64,16 @@ export function SiteHeader({
    */
   const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    if (!openCategory) return;
+    if (!openCategory && !menuOpen) return;
+    const close = () => {
+      setOpenCategory("");
+      setMenuOpen(false);
+    };
     const onPointerDown = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
-        setOpenCategory("");
-      }
+      if (!headerRef.current?.contains(event.target as Node)) close();
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpenCategory("");
+      if (event.key === "Escape") close();
     };
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
@@ -75,7 +81,7 @@ export function SiteHeader({
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [openCategory]);
+  }, [openCategory, menuOpen]);
 
   const rows = categories.data ?? [];
   // Дэд ангилал нь зөвхөн каталогийн хуудсанд утгатай (шүүлтүүр солино)
@@ -87,14 +93,14 @@ export function SiteHeader({
 
   return (
     <header ref={headerRef} className="sticky top-0 z-30 border-b border-ink-700 bg-ink-900/95 backdrop-blur">
-      <div className="mx-auto flex h-[72px] max-w-[1660px] items-center gap-6 px-4 xl:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
-          <LogoMark />
-          <span className="leading-none">
-            <span className="block text-[26px] font-extrabold tracking-tight text-fg">
+      <div className="mx-auto flex h-16 max-w-[1660px] items-center gap-3 px-3 sm:h-[72px] sm:gap-6 sm:px-4 xl:px-6">
+        <Link href="/" className="flex min-w-0 shrink items-center gap-2 sm:gap-2.5">
+          <LogoMark className="h-8 w-8 sm:h-[38px] sm:w-[38px]" />
+          <span className="min-w-0 leading-none">
+            <span className="block truncate text-[20px] font-extrabold tracking-tight text-fg sm:text-[26px]">
               BarilgaHUB
             </span>
-            <span className="mt-1 block text-[8.5px] font-medium uppercase tracking-[0.14em] text-mute-dim">
+            <span className="mt-1 hidden text-[8.5px] sm:block font-medium uppercase tracking-[0.14em] text-mute-dim">
               Барилгын материалын маркетплейс
             </span>
           </span>
@@ -128,11 +134,13 @@ export function SiteHeader({
           })}
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-3 lg:ml-0 lg:gap-5">
-          <ThemeToggle />
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-3 lg:ml-0 lg:gap-5">
+          <span className="hidden sm:block">
+            <ThemeToggle />
+          </span>
           <Link
             href="/cart"
-            className="relative flex h-10 w-10 items-center justify-center rounded-md text-mute transition-colors hover:text-fg"
+            className="relative flex h-10 w-9 items-center justify-center rounded-md text-mute transition-colors hover:text-fg sm:w-10"
             aria-label={`Сагс, ${cartCount} бараа`}
           >
             <CartIcon className="h-6 w-6" />
@@ -145,7 +153,7 @@ export function SiteHeader({
 
           <Link
             href="/favorites"
-            className="relative flex h-10 w-10 items-center justify-center rounded-md text-mute transition-colors hover:text-fg"
+            className="relative flex h-10 w-9 items-center justify-center rounded-md text-mute transition-colors hover:text-fg sm:w-10"
             aria-label={`Хадгалсан бараа, ${favoriteCount}`}
           >
             <HeartIcon className="h-[22px] w-[22px]" />
@@ -176,7 +184,7 @@ export function SiteHeader({
                   void reloadCart();
                   void reloadFavorites();
                 }}
-                className="rounded-md border border-ink-600 px-4 py-2.5 text-[13px] font-bold uppercase tracking-wide text-mute transition-colors hover:text-fg"
+                className="hidden rounded-md border border-ink-600 px-4 py-2.5 text-[13px] font-bold uppercase sm:block tracking-wide text-mute transition-colors hover:text-fg"
               >
                 Гарах
               </button>
@@ -192,14 +200,111 @@ export function SiteHeader({
               </Link>
               <Link
                 href="/login?mode=register"
-                className="rounded-md bg-brand px-5 py-2.5 text-[13px] font-bold uppercase tracking-wide text-on-brand transition-colors hover:bg-brand-hi"
+                className="hidden rounded-md bg-brand px-5 py-2.5 text-[13px] font-bold uppercase tracking-wide text-on-brand transition-colors hover:bg-brand-hi sm:block"
               >
                 Бүртгүүлэх
               </Link>
             </>
           )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setOpenCategory("");
+              setMenuOpen((open) => !open);
+            }}
+            aria-label={menuOpen ? "Цэс хаах" : "Цэс нээх"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            className="flex h-10 w-9 items-center justify-center rounded-md text-mute transition-colors hover:text-fg sm:w-10 lg:hidden"
+          >
+            {menuOpen ? (
+              <CloseIcon className="h-6 w-6" />
+            ) : (
+              <MenuIcon className="h-6 w-6" />
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Утсан дээрх цэс: навигаци, хэрэглэгчийн үйлдэл, theme. Том дэлгэцэд
+          эдгээр нь толгойн мөрөнд шууд харагддаг. */}
+      {menuOpen ? (
+        <div
+          id="mobile-menu"
+          className="border-t border-ink-700 bg-ink-900 lg:hidden"
+        >
+          <nav className="mx-auto flex max-w-[1660px] flex-col px-3 py-2 sm:px-4">
+            {NAV_LINKS.map((link) => {
+              const active = link.id === activeNav;
+              return (
+                <Link
+                  key={link.id}
+                  href={link.href}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    if (link.id === "home") onHomeReset?.();
+                  }}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center justify-between rounded-md px-3 py-3 text-[14px] font-semibold uppercase tracking-wide transition-colors ${
+                    active
+                      ? "bg-brand/10 text-brand"
+                      : "text-mute hover:bg-ink-800 hover:text-fg"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="mx-auto flex max-w-[1660px] flex-wrap items-center gap-2 border-t border-ink-700 px-3 py-3 sm:hidden">
+            {user ? (
+              <>
+                <Link
+                  href="/account/orders"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex min-w-0 flex-1 items-center gap-2 text-[13px] font-semibold text-mute transition-colors hover:text-fg"
+                >
+                  <UserIcon className="h-5 w-5 shrink-0" />
+                  <span className="truncate">{user.name}</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    logout();
+                    void reloadCart();
+                    void reloadFavorites();
+                  }}
+                  className="rounded-md border border-ink-600 px-4 py-2.5 text-[13px] font-bold uppercase tracking-wide text-mute transition-colors hover:text-fg"
+                >
+                  Гарах
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={loginHref}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md border border-ink-600 px-4 py-2.5 text-[13px] font-bold uppercase tracking-wide text-mute transition-colors hover:text-fg"
+                >
+                  <UserIcon className="h-5 w-5" />
+                  Нэвтрэх
+                </Link>
+                <Link
+                  href="/login?mode=register"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex flex-1 items-center justify-center rounded-md bg-brand px-4 py-2.5 text-[13px] font-bold uppercase tracking-wide text-on-brand transition-colors hover:bg-brand-hi"
+                >
+                  Бүртгүүлэх
+                </Link>
+              </>
+            )}
+            <ThemeToggle className="border border-ink-600" />
+          </div>
+        </div>
+      ) : null}
 
       <div className="border-t border-ink-700 bg-ink-900">
         <div className="mx-auto flex max-w-[1660px] items-stretch gap-1 overflow-x-auto px-4 xl:px-6">

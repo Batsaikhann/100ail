@@ -113,7 +113,7 @@ export function CatalogPanel({
           <div
             className={
               view === "grid"
-                ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+                ? "grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-3"
                 : "flex flex-col gap-3"
             }
           >

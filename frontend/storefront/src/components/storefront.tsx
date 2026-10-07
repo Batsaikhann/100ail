@@ -166,7 +166,7 @@ export function Storefront() {
       <main className="mx-auto max-w-[1660px] px-4 py-4 xl:px-6">
         <PromoBanners />
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.08fr)_268px_minmax(0,1fr)] xl:items-start">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.08fr)_268px_minmax(0,1fr)] xl:items-start">
           <div className="xl:col-start-1 xl:row-start-1">
             <CatalogPanel
               products={products}
@@ -188,7 +188,7 @@ export function Storefront() {
             />
           </div>
 
-          <div className="xl:col-start-2 xl:row-start-1">
+          <div className="order-first xl:order-none xl:col-start-2 xl:row-start-1">
             <FilterPanel
               groups={filterGroups}
               selected={selected}

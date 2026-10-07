@@ -56,7 +56,86 @@ export function OfferList({
         meta={`${offers.length} санал`}
       />
 
-      <div className="overflow-x-auto">
+      {/* Утсан дээр 8 баганатай хүснэгт багтахгүй тул санал бүрийг карт
+          хэлбэрээр харуулна */}
+      <ul className="divide-y divide-ink-700 md:hidden">
+        {offers.map((offer) => {
+          const active = offer.id === selectedId;
+          return (
+            <li key={offer.id}>
+              <button
+                type="button"
+                onClick={() => onSelect(offer.id)}
+                aria-pressed={active}
+                className={`flex w-full flex-col gap-2.5 border-l-[3px] px-4 py-3.5 text-left transition-colors ${
+                  active
+                    ? "border-brand bg-brand/[0.07]"
+                    : "border-transparent hover:bg-ink-800"
+                }`}
+              >
+                <span className="flex items-start justify-between gap-3">
+                  <span className="min-w-0">
+                    <span className="block truncate text-[13.5px] font-semibold text-fg">
+                      {offer.supplier.name}
+                    </span>
+                    <span className="mt-1 flex flex-wrap items-center gap-1.5">
+                      {offer.supplier.verified ? <VerifiedBadge /> : null}
+                      {offer.id === cheapest.id ? (
+                        <span className="rounded-full bg-brand/15 px-1.5 py-0.5 text-[10px] font-semibold text-brand">
+                          Хамгийн хямд
+                        </span>
+                      ) : null}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-right">
+                    <span className="block whitespace-nowrap text-[16px] font-bold text-brand">
+                      {formatPrice(offer.price)}
+                    </span>
+                    {offer.bulkPrice ? (
+                      <span className="mt-0.5 block whitespace-nowrap text-[11px] text-mute-dim">
+                        Бөөний {formatPrice(offer.bulkPrice)}
+                        {offer.bulkMinQty
+                          ? ` · ${formatNumber(offer.bulkMinQty)} ${offer.unit}-с`
+                          : ""}
+                      </span>
+                    ) : null}
+                  </span>
+                </span>
+
+                <span className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-mute">
+                  <span className="flex items-center gap-1.5">
+                    <PinIcon className="h-3.5 w-3.5 text-brand" />
+                    {offer.location}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <TruckIcon className="h-3.5 w-3.5" />
+                    {deliveryLabel(offer)}
+                    {offer.deliveryDays
+                      ? ` · ${offer.deliveryDays} хоногт`
+                      : ""}
+                  </span>
+                  <span>
+                    {formatNumber(offer.stock)} {offer.unit}
+                  </span>
+                  <Rating value={offer.rating} count={offer.reviewCount} />
+                </span>
+
+                <span
+                  className={`inline-flex items-center justify-center rounded-md px-3.5 py-2 text-[12px] font-bold uppercase tracking-wide transition-colors ${
+                    active
+                      ? "bg-brand text-on-brand"
+                      : "border border-ink-600 text-mute"
+                  }`}
+                >
+                  {active ? "Сонгосон" : "Сонгох"}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[880px] border-collapse text-left">
           <thead>
             <tr className="border-b border-ink-700 text-[11px] uppercase tracking-wide text-mute-dim">
