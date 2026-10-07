@@ -59,7 +59,7 @@ export function ComparisonPanel({
           Харьцуулах бүтээгдэхүүн алга.
         </p>
       ) : (
-        <div className="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 xl:grid-cols-4">
           {shown.map((product) => {
             const offer = offers[product.id];
             if (!offer) return null;

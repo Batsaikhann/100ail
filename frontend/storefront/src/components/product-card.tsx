@@ -56,7 +56,7 @@ function AddToCartButton({
       aria-label={`${offer.supplier.name} — сагсанд нэмэх`}
       className={`flex items-center justify-center gap-1.5 rounded font-semibold transition-colors ${
         size === "grid"
-          ? "mt-2.5 h-9 w-full text-[12.5px]"
+          ? "mt-2.5 h-9 w-full text-[12px] sm:text-[12.5px]"
           : "h-9 px-3.5 text-[12.5px]"
       } ${
         soldOut
@@ -120,7 +120,7 @@ export function ProductCard({
       onClick={handleFavorite}
       aria-label={favorite ? "Хадгалснаас хасах" : "Хадгалах"}
       aria-pressed={favorite}
-      className={`absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-ink-950/60 backdrop-blur transition-colors ${
+      className={`absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-ink-950/60 backdrop-blur transition-colors ${
         favorite ? "text-brand" : "text-mute hover:text-fg"
       }`}
     >
@@ -134,8 +134,8 @@ export function ProductCard({
   if (view === "list") {
     return (
       <Link href={href} className="block">
-        <article className="flex gap-4 rounded-md border border-ink-700 bg-ink-800 p-3 transition-colors hover:border-ink-600">
-          <div className="relative h-[104px] w-[140px] shrink-0 overflow-hidden rounded bg-gradient-to-b from-ink-700/60 to-ink-900">
+        <article className="flex gap-3 rounded-md border border-ink-700 bg-ink-800 p-2.5 sm:gap-4 sm:p-3 transition-colors hover:border-ink-600">
+          <div className="relative h-[88px] w-[88px] shrink-0 sm:h-[104px] sm:w-[140px] overflow-hidden rounded bg-gradient-to-b from-ink-700/60 to-ink-900">
             <ProductThumb
               image={product.image}
               art={product.art}
@@ -167,7 +167,7 @@ export function ProductCard({
               />
             </button>
             <div className="flex flex-col items-end gap-2">
-              <p className="text-lg font-bold text-brand">
+              <p className="whitespace-nowrap text-base font-bold text-brand sm:text-lg">
                 {formatPrice(offer.price)}
               </p>
               <AddToCartButton offer={offer} size="list" />
@@ -181,7 +181,7 @@ export function ProductCard({
   return (
     <Link href={href} className="block">
       <article className="group overflow-hidden rounded-md border border-ink-700 bg-ink-800 transition-colors hover:border-ink-600">
-        <div className="relative h-[168px] bg-gradient-to-b from-ink-700/50 to-ink-900 p-3">
+        <div className="relative h-[128px] bg-gradient-to-b from-ink-700/50 to-ink-900 p-2.5 sm:h-[168px] sm:p-3">
           <ProductThumb
             image={product.image}
             art={product.art}
@@ -189,14 +189,14 @@ export function ProductCard({
           />
           {favButton}
         </div>
-        <div className="border-t border-ink-700 p-3">
+        <div className="border-t border-ink-700 p-2.5 sm:p-3">
           <h3 className="line-clamp-2 min-h-[2.4em] text-[13px] font-semibold leading-tight text-fg">
             {product.name}
           </h3>
           <p className="mt-0.5 truncate text-[11.5px] text-mute">
             {offer.supplier.name}
           </p>
-          <p className="mt-2 text-[19px] font-bold leading-none text-brand">
+          <p className="mt-2 text-[16px] font-bold leading-none text-brand sm:text-[19px]">
             {formatPrice(offer.price)}
           </p>
           <StockBadges offer={offer} />

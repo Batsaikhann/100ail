@@ -136,10 +136,10 @@ export function ProductDetail({
           <span className="text-fg">{product.name}</span>
         </nav>
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
           <div className="flex flex-col gap-4">
             <Panel className="p-4">
-              <div className="grid gap-5 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
                 <div className="flex flex-col gap-2">
                   <div className="relative h-[260px] overflow-hidden rounded-md bg-gradient-to-b from-ink-700/50 to-ink-900 p-4">
                     {images.length > 0 ? (
@@ -295,7 +295,7 @@ export function ProductDetail({
 
               <div className="p-4">
                 {tab === "spec" ? (
-                  <dl className="grid gap-x-8 sm:grid-cols-2">
+                  <dl className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
                     {(detail?.attributes ?? []).map((attribute) => (
                       <div
                         key={attribute.label}
